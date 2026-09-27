@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Détail - AMNA LEUP SN</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f2f2f2;padding-bottom:120px}
+header{background:#fff;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0002;position:sticky;top:0;z-index:10}
+header a{text-decoration:none;color:#000;font-weight:900;font-size:18px}
+.img-box{background:#fff;padding:8px}
+.img-box img{width:100%;border-radius:15px;max-height:450px;object-fit:cover}
+.info{background:#fff;margin:10px;border-radius:15px;padding:15px;border:2px solid #0a7a42}
+.prix{color:#0a7a42;font-size:26px;font-weight:900;margin:6px 0}
+.vendeur{background:#fff;border:2px solid red;border-radius:15px;padding:15px;margin:10px}
+.vendeur p{font-size:13px;margin:5px 0;font-weight:700}
+.btn{display:block;width:92%;margin:8px 4%;padding:16px;border:none;border-radius:30px;font-size:15px;font-weight:900;color:#fff;cursor:pointer;text-align:center;text-decoration:none}
+.btn-panier{background:#111}
+.btn-wa{background:#25D366}
+.btn-admin{background:#0a7a42}
+</style></head>
+<body>
+<header><a href="index.html">← Retour</a><b>AMNA LEUP SN</b></header>
+<div class="img-box"><img id="photo" src="logo.jpg"></div>
+<div class="info">
+<h2 id="nom">Voiture 4x4</h2>
+<p class="prix" id="prix">5000000 FCFA</p>
+<p id="desc" style="color:#555;font-size:12px">Belle voiture zéro problème</p>
+</div>
+
+<div class="vendeur">
+<h3 style="color:red">📍 Infos Produit & Vendeur</h3>
+<p>👤 Vendeur: <b id="vNom">Cheikh Ahmadou Bamba Adj</b></p>
+<p>📞 Tel Vendeur: <b id="vTel">772468889</b></p>
+<p>🏠 Adresse: <b id="vAdr">Guediawaye</b></p>
+<p>💰 Prix: <b id="vPrix2">5000000 FCFA</b></p>
+</div>
+
+<button class="btn btn-panier" onclick="ajouterPanier()">🛒 AJOUTER AU PANIER</button>
+<button class="btn btn-wa" onclick="commanderAdmin()">COMMANDER SUR WHATSAPP ADMIN</button>
+<a class="btn btn-admin" href="tel:+221754560985">📞 CONTACT ADMIN - APPELER DIRECT</a>
+
+<script>
+let WA_ADMIN = "221754560985";
+let p = JSON.parse(localStorage.getItem('produitActuel') || localStorage.getItem('selectedProduit') || '{}');
+let currentProd = null;
+if(p && (p.nom || p.name)){
+  currentProd = {
+    name: p.nom || p.name,
+    prix: (p.prix || p.price || '5000000').toString().replace(/[^0-9]/g,''),
+    img: p.photo || p.img || 'logo.jpg',
+    vendeurNom: p.vendeurNom || p.vendeur || 'Cheikh Ahmadou Bamba Adj',
+    vendeurTel: p.vendeurTel || p.tel || '772468889',
+    adresse: p.adresse || p.quartier || 'Guediawaye',
+    desc: p.desc || p.nom || p.name || ''
+  };
+  document.getElementById('photo').src = currentProd.img;
+  document.getElementById('nom').innerText = currentProd.name;
+  document.getElementById('prix').innerText = currentProd.prix + ' FCFA';
+  document.getElementById('vPrix2').innerText = currentProd.prix + ' FCFA';
+  document.getElementById('desc').innerText = currentProd.desc;
+  document.getElementById('vNom').innerText = currentProd.vendeurNom;
+  document.getElementById('vTel').innerText = currentProd.vendeurTel;
+  document.getElementById('vAdr').innerText = currentProd.adresse;
+}
+
+function ajouterPanier(){
+  if(!currentProd) return alert("Vide");
+  let panier = JSON.parse(localStorage.getItem('amna_panier')||'[]');
+  let exist = panier.find(x=>x.name===currentProd.name);
+  if(exist){ exist.qty++; }else{
+    panier.push({name:currentProd.name, prix:currentProd.prix, vendeur:currentProd.vendeurNom+" ("+currentProd.vendeurTel+")", quartier:currentProd.adresse, img:currentProd.img, qty:1});
+  }
+  localStorage.setItem('amna_panier', JSON.stringify(panier));
+  alert("✅ Ajouté au panier! Maintenant va dans PANIER et commande, ça ira chez ADMIN");
+  window.location.href="index.html";
+}
+
+function commanderAdmin(){
+  let nom = document.getElementById('nom').innerText;
+  let prix = document.getElementById('prix').innerText;
+  let vendeur = document.getElementById('vNom').innerText;
+  let telV = document.getElementById('vTel').innerText;
+  let adr = document.getElementById('vAdr').innerText;
+  // TOUT VA CHEZ TOI ADMIN
+  let msg = `Salam ADMIN AMNA LEUP!%0AJe veux commander:%0A📦 ${nom}%0A💰 ${prix}%0A👤 Vendeur: ${vendeur} (${telV})%0A🏠 Adresse vendeur: ${adr}%0A%0AMon nom:%0AMon adresse de livraison:`;
+  window.open(`https://wa.me/${WA_ADMIN}?text=${msg}`,'_blank');
+}
+</script>
+</body></html>
